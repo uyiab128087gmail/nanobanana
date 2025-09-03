@@ -1,110 +1,243 @@
+# Nanobanana - 强大的AI图像分析工具
 
-# Nanobanana - OpenRouter Gemini API 代理 & 图片生成 Web UI
+> 一个基于OpenRouter Gemini API的智能图像处理Web应用程序，提供强大的AI图像分析功能
 
-本项目已经从一个简单的 Web 应用进化为一个功能强大的双用途服务。它既是一个 **兼容 Google Gemini API 的 OpenRouter 代理服务器**，又提供了一个直观的 **Web 用户界面**，让您可以轻松地与多模态模型进行交互。
+## 功能特性
+
+Nanobanana是一个功能强大的AI工具，具有以下特点：
+- **API兼容性**：完全兼容Google Gemini API和OpenRouter
+- **Web界面**：提供友好的用户界面进行AI图像分析
 
 ## 核心功能
 
-### 🚀 API 代理功能 (为开发者)
+### API接口支持
+- **原生Gemini API兼容**：使用`@google/generative-ai` SDK无缝对接
+- **流式与非流式**：支持`streamGenerateContent`和`generateContent`方法
+- **多种认证方式**：支持标准认证格式和自定义认证头
+- **安全认证**：支持`Authorization: Bearer`和`x-goog-api-key`双重认证
+- **跨域支持**：内置CORS中间件解决跨域访问
 
-*   **Gemini API 兼容**: 提供了与 Google AI for JS SDK (`@google/generative-ai`) 完全兼容的 API 端点。您可以将现有的 Gemini 客户端代码无缝对接到本服务，从而通过 OpenRouter 使用其支持的任意模型。
-*   **支持流式与非流式响应**: 完整实现了 `:streamGenerateContent` (流式) 和 `:generateContent` (非流式) 两个核心端点。
-*   **智能历史提取**: 代理服务器会自动从 Gemini 的完整对话历史 (`contents`) 中提取最近的、相关的上下文发送给模型，优化了请求效率。
-*   **统一认证**: 支持通过 `Authorization: Bearer <API_KEY>` 或 `x-goog-api-key` header 传递 OpenRouter API Key。
+### 智能Web UI界面
+- **直观操作**：用户友好的图形界面
+- **批量处理**：支持多图像同时分析
+- **实时反馈**：提供处理进度和结果展示
+- **多种输出格式**：支持文本、图像URL等多种输出
+- **API密钥管理**：安全的API密钥存储和管理
 
-### ✨ Web UI 功能 (为最终用户)
+### 技术架构特点
+- **后端框架**：Node.js + Express
+- **跨域处理**：CORS中间件
+- **文件上传**：Multer中间件
+- **前端技术**：原生JavaScript + HTML5 + CSS3
+- **AI引擎**：基于OpenRouter的`google/gemini-2.5-flash-image-preview:free`
 
-*   **多图上传**: 支持上传一张或多张本地图片并显示缩略图。
-*   **直观交互**: 输入文本提示词，结合上传的图片与 AI 进行对话或创作。
-*   **API Key 输入**: 方便地在前端输入您的 OpenRouter API Key 进行认证。
-*   **即时结果展示**: 在前端界面直接显示模型生成的文本或图片结果。
+## 核心API接口
 
-## 为何使用本项目？
-
-*   **对于开发者**: 您可以利用丰富的 Gemini 客户端生态和 SDK，但将后端的模型请求路由到 OpenRouter。这使得切换不同供应商的模型变得异常简单，避免了厂商锁定。
-*   **对于使用者**: 您获得了一个无需安装、部署在云端的免费 Web 界面，可以方便地测试和使用 `google/gemini-pro-vision` 等强大的多模态模型。
-
-## API 端点说明
-
-本服务暴露了以下主要 API 端点：
-
-*   **`/v1beta/models/gemini-pro:streamGenerateContent`**
-    *   **用途**: 流式生成内容，兼容 Gemini SDK。
-    *   **请求体**: Google AI SDK 的标准请求格式。
-    *   **响应**: Server-Sent Events (SSE) 数据流。
-
-*   **`/v1beta/models/gemini-pro:generateContent`**
-    *   **用途**: 非流式（一次性）生成内容，兼容 Gemini SDK。
-    *   **请求体**: Google AI SDK 的标准请求格式。
-    *   **响应**: JSON 对象。
-
-*   **`/generate`**
-    *   **用途**: 为本项目自带的 "Nanobanana" Web UI 提供后端服务。
-    *   **请求体**: `{ "prompt": string, "images": string[], "apikey": string }`
-    *   **响应**: `{ "imageUrl": string }` 或 `{ "error": string }`
-
-## 技术栈
-
-- **前端**: HTML, CSS, JavaScript (无框架)
-- **后端**: Deno, Deno Standard Library
-- **AI 模型**: 通过 OpenRouter 代理，默认为 `google/gemini-2.5-flash-image-preview:free`，但可由 API 请求指定其他模型。
-
-## 如何部署到 Deno Deploy
-
-1.  **Fork 本项目**: 将此项目 Fork 到您自己的 GitHub 仓库。
-
-2.  **登录 Deno Deploy**: 使用您的 GitHub 账号登录 [Deno Deploy](https://dash.deno.com/account/overview)。
-
-3.  **创建新项目**:
-    *   点击 "New Project"。
-    *   选择您 Fork 的 GitHub 仓库。
-    *   选择 `main` 分支和 `main.ts` (或您的主文件名) 作为入口文件。
-
-4.  **配置环境变量 (可选但推荐)**:
-    *   在 Deno Deploy 项目的设置中，找到 "Environment Variables"。
-    *   添加一个名为 `OPENROUTER_API_KEY` 的新变量，值为您的 OpenRouter API Key。
-    *   这样做可以避免每次都在前端 UI 输入 API Key，也为 API 代理提供一个默认 Key。
-
-5.  **部署**: 点击 "Link" 或 "Deploy" 按钮，Deno Deploy 将会自动部署您的应用。
-
-6.  **访问**: 部署成功后，您将获得一个 `*.deno.dev` 的 URL，通过该 URL 即可访问您的 Web UI。
-
-## 如何使用
-
-### 方式一：使用 Web 界面
-
-1.  打开您部署后的 `*.deno.dev` URL。
-2.  (可选) 如果您没有在 Deno Deploy 中设置环境变量，请在 "输入你的 OpenRouter API Key..." 输入框中填入您的 Key。
-3.  (可选) 点击 "选择图片" 上传一张或多张图片。
-4.  在 "输入提示词..." 文本框中输入您的想法。
-5.  点击 "生成" 按钮。
-6.  等待片刻，生成的图片或文本将显示在下方。
-
-### 方式二：作为 API 代理 (开发者)
-
-将您现有的 Gemini 客户端代码中的 API 端点指向您部署的 Deno Deploy URL。
-
-**示例 (使用 cURL)**:
-假设您的 Deno Deploy URL 是 `https://my-gemini-proxy.deno.dev`。
-
-```bash
-curl -X POST https://my-gemini-proxy.deno.dev/v1beta/models/gemini-pro:generateContent \
--H "Content-Type: application/json" \
--H "Authorization: Bearer YOUR_OPENROUTER_API_KEY" \
--d '{
-  "contents": [
-    {
-      "role": "user",
-      "parts": [
-        { "text": "这张图里有什么？" },
-        {
-          "inlineData": {
-            "mimeType": "image/jpeg",
-            "data": "BASE64_ENCODED_IMAGE_DATA"
-          }
-        }
-      ]
-    }
-  ]
-}'
+### 1. 流式生成
 ```
+POST /v1beta/models/gemini-pro:streamGenerateContent
+```
+**功能**：流式AI文本生成
+**认证**：Bearer Token或x-goog-api-key
+**响应**：Server-Sent Events (SSE)流
+**实现**：完全兼容Gemini SDK
+
+### 2. 标准生成
+```
+POST /v1beta/models/gemini-pro:generateContent
+```
+**功能**：标准AI文本生成
+**认证**：Bearer Token或x-goog-api-key
+**响应**：JSON格式
+**实现**：完全兼容Gemini SDK
+
+### 3. Web UI专用接口
+```
+POST /generate
+```
+**功能**：为Web界面特别优化的生成接口
+**请求格式**：
+```json
+{
+  "prompt": "string - 提示文本",
+  "images": ["string[] - base64编码图片"],
+  "apikey": "string - OpenRouter API密钥"
+}
+```
+**响应格式**：
+```json
+{
+  "imageUrl": "string - 生成图片URL"
+}
+```
+
+## 快速部署
+
+### 本地开发
+
+1. **克隆项目**
+```bash
+git clone [your-repo-url]
+cd nanobanana
+```
+
+2. **安装依赖**
+```bash
+npm install
+```
+
+3. **配置环境变量**
+```bash
+# 创建.env文件
+echo "OPENROUTER_API_KEY=你的OpenRouter密钥" > .env
+```
+
+4. **启动开发服务器**
+```bash
+npm run dev  # 开发模式(nodemon自动重启)
+# 或
+npm start    # 生产模式
+```
+
+### 生产环境部署
+
+#### 使用PM2部署
+```bash
+# 安装PM2
+npm install -g pm2
+
+# 使用ecosystem配置启动
+npm run pm2
+
+# 或手动启动
+pm2 start app.js --name "nanobanana"
+```
+
+#### 使用系统服务部署
+1. 确保项目已上传到服务器
+2. 安装Node.js和依赖包
+3. 配置启动脚本：`app.js`
+4. 配置监听端口3000
+5. 设置环境变量：`OPENROUTER_API_KEY`
+
+## 使用说明
+
+### Web界面使用
+1. 访问服务器主页
+2. 输入您的OpenRouter API密钥
+3. 上传需要分析的图片
+4. 输入分析提示文本
+5. 点击"分析"按钮
+6. 查看分析结果
+
+### API直接调用
+
+#### 使用cURL调用
+```bash
+curl -X POST "http://your-domain:3000/v1beta/models/gemini-pro:generateContent" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_OPENROUTER_API_KEY" \
+  -d '{
+    "contents": [
+      {
+        "role": "user",
+        "parts": [
+          {"text": "分析这张图片"},
+          {
+            "inlineData": {
+              "mimeType": "image/jpeg",
+              "data": "BASE64_ENCODED_IMAGE_DATA"
+            }
+          }
+        ]
+      }
+    ]
+  }'
+```
+
+#### 使用Gemini SDK
+```javascript
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
+// 配置客户端
+const genAI = new GoogleGenerativeAI("YOUR_OPENROUTER_API_KEY");
+const model = genAI.getGenerativeModel({ 
+  model: "gemini-pro",
+  baseUrl: "http://your-domain:3000"
+});
+
+const result = await model.generateContent([
+  "分析这张图片",
+  { inlineData: { data: base64Image, mimeType: "image/jpeg" } }
+]);
+```
+
+## 配置说明
+
+### 环境变量
+- `PORT`：服务监听端口，默认3000
+- `OPENROUTER_API_KEY`：OpenRouter API密钥，必须配置
+
+### CORS配置
+项目已配置完整的CORS支持：
+- 允许所有来源访问
+- 支持GET、POST、OPTIONS方法
+- 允许Content-Type、Authorization、x-goog-api-key请求头
+
+## 安全特性
+
+- **API密钥保护**：密钥仅在服务端处理，不暴露给客户端
+- **请求验证**：完整的输入参数验证
+- **错误处理**：友好的错误信息返回
+- **文件大小限制**：JSON请求体限制50MB
+
+## 项目结构
+
+```
+nanobanana/
+├── app.js              # 主服务器文件
+├── package.json        # 项目配置
+├── ecosystem.config.js # PM2配置
+├── static/            # 静态文件目录
+│   ├── index.html     # 主页面
+│   ├── style.css      # 样式文件
+│   └── script.js      # 前端脚本
+├── deploy-docs/       # 部署文档
+└── README.md         # 项目说明
+```
+
+## 高级用法
+
+### 开发者用法
+- 使用原生Gemini SDK连接到OpenRouter
+- 利用完整的流式API构建实时AI应用
+- 集成到现有的AI工作流程
+
+### 企业级用法
+- 搭建私有AI图像分析服务
+- 批量处理企业图片资产
+- 构建AI驱动的内容管理系统
+
+## 版本历史
+
+- **v1.0.0**：初始版本
+  - 完整的Gemini API兼容
+  - 友好的Web UI界面
+  - 流式和标准响应
+  - CORS跨域支持配置
+
+## 贡献指南
+
+欢迎提交Issue和Pull Request来改进项目
+
+## 开源协议
+
+MIT License - 详见LICENSE文件
+
+## 技术支持
+
+如有问题，请通过GitHub Issues联系我们
+
+---
+
+*Nanobanana - 让AI图像分析更简单*
