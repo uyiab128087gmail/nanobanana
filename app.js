@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -252,8 +253,8 @@ app.post('*generateContent', async (req, res) => {
 // 接口 3: 专用 Web UI (nano banana)
 app.post('/generate', async (req, res) => {
     try {
-        const { prompt, images, apikey } = req.body;
-        const openrouterApiKey = apikey || process.env.OPENROUTER_API_KEY;
+        const { prompt, images } = req.body;
+        const openrouterApiKey = process.env.OPENROUTER_API_KEY;
         
         if (!openrouterApiKey) {
             return res.status(500).json({ error: "OpenRouter API key is not set." });

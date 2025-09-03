@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const fileInput = document.getElementById('image-upload');
     const thumbnailsContainer = document.getElementById('thumbnails-container');
     const promptInput = document.getElementById('prompt-input');
-    const apiKeyInput = document.getElementById('api-key-input');
     const generateBtn = document.getElementById('generate-btn');
     const btnText = generateBtn.querySelector('.btn-text');
     const spinner = generateBtn.querySelector('.spinner');
@@ -77,18 +76,15 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.readAsDataURL(file);
     }
 
-    // --- 核心修改区域开始 ---
+    // 生成按钮点击事件
     generateBtn.addEventListener('click', async () => {
-        if (!apiKeyInput.value.trim()) {
-            alert('请输入 OpenRouter API 密钥');
-            return;
-        }
-
+        // 验证文件
         if (selectedFiles.length === 0) {
             alert('请选择至少一张图片');
             return;
         }
 
+        // 验证提示词
         if (!promptInput.value.trim()) {
             alert('请输入提示词');
             return;
@@ -97,13 +93,11 @@ document.addEventListener('DOMContentLoaded', () => {
         setLoading(true);
 
         try {
-            // 1. 创建一个 Promise 数组，用于将所有选中的文件转换为 Base64
+            // 转换所有文件为Base64
             const conversionPromises = selectedFiles.map(file => fileToBase64(file));
-            
-            // 2. 等待所有文件转换完成
             const base64Images = await Promise.all(conversionPromises);
             
-            // 3. 发送包含 images 数组的请求
+            // 发送请求到后端
             const response = await fetch('/generate', {
                 method: 'POST',
                 headers: {
@@ -111,8 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 body: JSON.stringify({
                     prompt: promptInput.value,
-                    images: base64Images, // 注意：这里从 'image' 改为了 'images'，并且值是一个数组
-                    apikey: apiKeyInput.value
+                    images: base64Images
                 })
             });
 
@@ -124,17 +117,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
             displayResult(data.imageUrl);
         } catch (error) {
-            alert('Error: ' + error.message);
-            resultContainer.innerHTML = `<p>Error: ${error.message}</p>`;
+            alert('生成失败: ' + error.message);
+            resultContainer.innerHTML = `<p>错误: ${error.message}</p>`;
         } finally {
             setLoading(false);
         }
     });
-    // --- 核心修改区域结束 ---
 
     function setLoading(isLoading) {
         generateBtn.disabled = isLoading;
-        btnText.textContent = isLoading ? 'Generating...' : 'Generate';
+        btnText.textContent = isLoading ? '生成中...' : '生成';
         spinner.classList.toggle('hidden', !isLoading);
     }
 

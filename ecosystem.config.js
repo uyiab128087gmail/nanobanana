@@ -5,43 +5,43 @@ module.exports = {
     instances: 1,
     exec_mode: 'fork',
     
-    // ú,Mn
-    port: 3000,
+    // åŸºç¡€é…ç½®
+    port: 3008,
     node_args: '--max-old-space-size=512',
     
-    // ¯ƒØÏ
+    // ç¯å¢ƒå˜é‡
     env: {
       NODE_ENV: 'production',
-      PORT: 3000,
-      // OPENROUTER_API_KEY: '(Tb-¾n¯ƒØÏ'
+      PORT: 3008,
+      // OPENROUTER_API_KEY: 'åœ¨è¿™é‡Œè®¾ç½®ä½ çš„å¯†é’¥'
     },
     
-    // Í/Ve
+    // ç›‘æ§é…ç½®
     watch: false,
     ignore_watch: ['node_modules', 'logs'],
     max_restarts: 10,
     min_uptime: '10s',
     
-    // å×Mn
+    // æ—¥å¿—é…ç½®
     log_file: './logs/combined.log',
     out_file: './logs/out.log',
     error_file: './logs/error.log',
     log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
     merge_logs: true,
     
-    // ê¨Í/aö
+    // è‡ªåŠ¨é‡å¯
     autorestart: true,
     restart_delay: 4000,
     
-    // Û¡
+    // è¶…æ—¶è®¾ç½®
     kill_timeout: 5000,
     listen_timeout: 3000,
     shutdown_with_message: true,
     
-    // DP6
+    // å†…å­˜é™åˆ¶
     max_memory_restart: '300M',
     
-    // e·Àå
+    // å¥åº·æ£€æŸ¥
     health_check_grace_period: 3000
   }]
 };
