@@ -11,21 +11,21 @@
     <h1 class="title">🍌 neo banana</h1>
     <div class="main-container">
         <div class="controls-container">
+            <div class="prompt-section">
+                <h2>输入提示词</h2>
+                <textarea id="prompt-input" placeholder="例如：一只穿着超级英雄斗篷的猫，电影级灯光，或者描述你想要生成的图片"></textarea>
+            </div>
+
             <div class="upload-section">
-                <h2>上传图片</h2>
+                <h2>上传图片 (可选)</h2>
                 <div class="upload-area">
                     <input type="file" id="image-upload" accept="image/*" multiple>
                     <label for="image-upload">
                         <p>点击或拖拽上传</p>
-                        <span>支持多张图片</span>
+                        <span>支持多张图片，用于图像编辑或参考</span>
                     </label>
                 </div>
                 <div id="thumbnails-container"></div>
-            </div>
-
-            <div class="prompt-section">
-                <h2>输入提示词</h2>
-                <textarea id="prompt-input" placeholder="例如：一只穿着超级英雄斗篷的猫，电影级灯光"></textarea>
             </div>
 
             <button id="generate-btn">

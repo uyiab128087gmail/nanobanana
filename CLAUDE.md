@@ -1,0 +1,1 @@
+如果是node程序，你修改完代码，请使用bt_node_restart.sh重启服务

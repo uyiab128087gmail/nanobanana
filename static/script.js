@@ -78,12 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 生成按钮点击事件
     generateBtn.addEventListener('click', async () => {
-        // 验证文件
-        if (selectedFiles.length === 0) {
-            alert('请选择至少一张图片');
-            return;
-        }
-
         // 验证提示词
         if (!promptInput.value.trim()) {
             alert('请输入提示词');
@@ -93,9 +87,17 @@ document.addEventListener('DOMContentLoaded', () => {
         setLoading(true);
 
         try {
-            // 转换所有文件为Base64
-            const conversionPromises = selectedFiles.map(file => fileToBase64(file));
-            const base64Images = await Promise.all(conversionPromises);
+            // 准备请求数据
+            const requestData = {
+                prompt: promptInput.value
+            };
+            
+            // 如果有图片则添加到请求中
+            if (selectedFiles.length > 0) {
+                const conversionPromises = selectedFiles.map(file => fileToBase64(file));
+                const base64Images = await Promise.all(conversionPromises);
+                requestData.images = base64Images;
+            }
             
             // 发送请求到后端
             const response = await fetch('/generate', {
@@ -103,10 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    prompt: promptInput.value,
-                    images: base64Images
-                })
+                body: JSON.stringify(requestData)
             });
 
             const data = await response.json();
